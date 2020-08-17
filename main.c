@@ -86,7 +86,6 @@ int main()
 
   while( 1 )
   {
-    // Print out the mfs prompt
     printf ("mfs> ");
 
     //Read the command from the commandline.  The
@@ -168,7 +167,7 @@ int main()
             fread(&dir[0],MAX_DIRECTORY_ENTRIES,sizeof(struct DirectoryEntry),fp);
         }
     }
-    else if( fp != NULL && strcmp(token[0],"open") == 0 ) //If file system image has alreadys been opened display error message
+    else if( fp != NULL && strcmp(token[0],"open") == 0 ) //If file system image has already been opened, display an error message
     {
         printf("Error: File system image already open\n");
     }
@@ -212,7 +211,7 @@ int main()
                  BPB_NumFATs,BPB_NumFATs,
                  BPB_FATSz32,BPB_FATSz32);
     }
-    else if( strcmp(token[0],"stat") == 0 ) //Displays the attributes and
+    else if( strcmp(token[0],"stat") == 0 ) //Display the attributes and
                                             //the starting cluster number of the file or directory name
     {
         char input[MAX_COMMAND_SIZE]; //String to store file name input from user
@@ -220,7 +219,7 @@ int main()
         
         int position = compare(input); //Get the position of the file or sub-directory in the file system image
         
-        if( position == MAX_DIRECTORY_ENTRIES ) //If file or directory couldn't be found
+        if( position == MAX_DIRECTORY_ENTRIES ) //If file or directory cannot be found
         {
             printf("Error: File not found\n");
         }
@@ -230,7 +229,7 @@ int main()
                 dir[position].DIR_Attr,dir[position].DIR_FileSize,dir[position].DIR_FirstClusterLow);
         }
     }
-    else if( strcmp(token[0],"get") == 0 ) //Print all the required information about the file system image
+    else if( strcmp(token[0],"get") == 0 ) //Print all of the required information about the file system image
     {
         char input[MAX_COMMAND_SIZE]; //String to store file name input from user
         char input_copy[MAX_COMMAND_SIZE]; //Copy of input string
@@ -246,7 +245,7 @@ int main()
         }
         else
         {
-            //Specification for file in the file system image to be moved to the current local working directory
+            //Specification for the file in the file system image which is about to be moved to the current local working directory
             
             FILE *new_file_fp; //File pointer for file to be placed in current working directory
             int offset; //Starting address for file
@@ -254,7 +253,7 @@ int main()
             int next_block_offset; //Offset of next block in the file system image
             int total_clusters = ( dir[position].DIR_FileSize % BPB_BytsPerSec ) == 0 ?
                                         ( dir[position].DIR_FileSize / BPB_BytsPerSec ) :
-                                            (dir[position].DIR_FileSize / BPB_BytsPerSec ) + 1; //Total number of clusters for the file; //Total number of clusters for the file
+                                            (dir[position].DIR_FileSize / BPB_BytsPerSec ) + 1; //Total number of clusters for the file
             int rem_byts_last_cluster = BPB_BytsPerSec -
                                     ( total_clusters * BPB_BytsPerSec - dir[position].DIR_FileSize ); //Total bytes                                                                        in the last cluster of the file
             char file_data[BPB_BytsPerSec+1]; //Array to store file data
@@ -352,7 +351,7 @@ int main()
                     directory_path_pointer = 1;
                     
                     fseek(fp,root_address,SEEK_SET);
-                    fread(&dir[0],16,sizeof(struct DirectoryEntry),fp); //Set the previous directory as the current directorys
+                    fread(&dir[0],16,sizeof(struct DirectoryEntry),fp); //Set the previous directory as the current directory
                 }
                 else if( strcmp(input[token_index],"..") == 0 )
                 {
@@ -364,11 +363,11 @@ int main()
                     {
                         directory_path_pointer--;
                         
-                        int offset = directory_path[directory_path_pointer - 1] == root_address ? root_address : LBAToOffset(directory_path[directory_path_pointer - 1]); //If changing directory to root
-                                                                                     //then we don't need to calculate offset
+                        int offset = directory_path[directory_path_pointer - 1] == root_address ? root_address : LBAToOffset(directory_path[directory_path_pointer - 1]); //If we are changing directory to root
+                                                                                                                                                                          //then we don't need to calculate offset
                         
                         fseek(fp,offset,SEEK_SET);
-                        fread(&dir[0],16,sizeof(struct DirectoryEntry),fp); //Set the previous directory as the current directory
+                        fread(&dir[0],16,sizeof(struct DirectoryEntry),fp); 
                     }
                 }
                 else
@@ -408,8 +407,8 @@ int main()
             {
                 struct DirectoryEntry temp_dir[MAX_DIRECTORY_ENTRIES]; //Structure for the temporary directory
                 int temp_directory_path_pointer = directory_path_pointer - 1; //Temporary directory path pointer
-                int offset = directory_path[temp_directory_path_pointer - 1] == root_address ? root_address : LBAToOffset(directory_path[temp_directory_path_pointer - 1]); //If changing directory to root
-                                                                             //then we don't need to calculate offset
+                int offset = directory_path[temp_directory_path_pointer - 1] == root_address ? root_address : LBAToOffset(directory_path[temp_directory_path_pointer - 1]); //If we are changing directory to root
+                                                                                                                                                                            //then we don't need to calculate offset
                 fseek(fp,offset,SEEK_SET);
                 fread(&temp_dir[0],16,sizeof(struct DirectoryEntry),fp); //Set the previous directory as the current directory
                 
@@ -478,7 +477,7 @@ int main()
         }
         else
         {
-            char result[num_bytes+1];  //Preprare char array with length 1 greater than no. of bytes to be read
+            char result[num_bytes+1]; //Preprare char array with length 1 greater than no. of bytes to be read
             
             if( num_bytes <= BPB_BytsPerSec)
             {
@@ -509,7 +508,6 @@ int main()
                         fread(&result[read_position_pointer], num_bytes - read_position_pointer ,1,fp);
                         result[num_bytes] = '\0';
                         read_position_pointer += BPB_BytsPerSec;
-                        //printf("1. %s", file_data_last);
                     }
                     else
                     {
@@ -522,7 +520,7 @@ int main()
                 }
             }
 
-             while( k != num_bytes ) // Print the output as hex characters in the file
+             while( k != num_bytes ) //Print the output as hex characters in the file
              {
                  printf("%x ",result[k]);
                  k++;
@@ -542,7 +540,7 @@ int main()
 }
 
 
-// Finds the starting address of a block of data given the sector number corresponding to that data block
+//Find the starting address of a block of data given the sector number corresponding to that data block
 
 int LBAToOffset(int32_t sector )
 {
@@ -551,7 +549,7 @@ int LBAToOffset(int32_t sector )
 }
 
 
-// Given a logical block address, lookup into the first FAT and return the logical address of the next block in file
+//Given a logical block address, lookup into the first FAT and return the logical address of the next block in file
 
 int16_t NextLB( uint32_t sector )
 {
@@ -562,15 +560,15 @@ int16_t NextLB( uint32_t sector )
     return val;
 }
 
-// Convert input file name or sub-directory name into format from file system image and return the position.
-// Function will return MAX_DIRECCTORY_ENTRIES value if the file or sub-directory cannot be found.
+//Convert input file name or sub-directory name into format from file system image and return the position.
+//Function will return MAX_DIRECCTORY_ENTRIES value if the file or sub-directory cannot be found.
 
 int compare(char input[])
 {
     //Convert input file name into format from file system image
     
-    int i = 0; //Loop variable
-    int j = 0; //Loop variable
+    int i = 0;
+    int j = 0; 
 
     char expanded_name[MAX_COMMAND_SIZE];
     memset( expanded_name, ' ', 12 );
